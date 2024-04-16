@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { useState ,useEffect} from 'react';
+import { Text, View, Button, TextInput,Dimensions ,ScrollView} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
+import { styles } from './Style';
 
 const Greedy = props => {
 
@@ -11,43 +13,55 @@ const Greedy = props => {
 }
 
 
+const Carte =  props =>{
+
+  let  newStyle = Object.assign({},{width:props.dimensions.width,height:props.dimensions.width/1.6},styles.rectangle) ;
+  return (
+
+
+
+      <ScrollView style={styles.flexBox}>
+        { props.nbCarte ? Array(props.nbCarte).fill(1).map((e,i)=>(
+          <LinearGradient key={i} style={newStyle}
+          colors={['rgba(2,0,36,1)', 'rgba(9,9,121,1)', 'rgba(0,212,255,1)']}
+          start={{x:0.4,y : 0}}
+          >
+            <View  ></View>
+          </LinearGradient>
+
+        )): <View></View>}
+      </ScrollView>
+  
+  )
+}
+
 export default function App() {
-  const [niggerName, setNiggerName] = useState("salut")
+  const [niggerName, setNiggerName] = useState(1);
+
+  const [screenDimensions, setScreenDimensions] = useState({ width: 0, height: 0 });
+
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setScreenDimensions(Dimensions.get('window'));
+    };
+    updateDimensions();
+    Dimensions.addEventListener('change', updateDimensions);
+  }, []);
 
 
   return (
     <View style={styles.container}>
       <Greedy name={niggerName} />
-      <Image source={require('./livereact.jpg')} style={{width:100,height:100}}/>
       <TextInput 
         style={styles.input}
-
         defaultValue='' 
         onSubmitEditing={value => { setNiggerName(value.nativeEvent.text) }} 
       />
+
+      <Carte dimensions={screenDimensions} nbCarte={parseInt(niggerName)}/>
 
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 10,
-    fontSize: 16,
-    color: '#333',
-    width: '80%',
-    height: 40,
-
-
-
-  },
-});
